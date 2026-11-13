@@ -1,0 +1,57 @@
+#+TITLE: gramps-tui
+
+A LifeLines-style terminal browser and editor for [[https://gramps-project.org][Gramps]] family trees.
+
+It works directly on your Gramps database (Gramps 6, SQLite backend), using
+Gramps' own Python API, so all relationships and indexes stay consistent.
+Gramps must not have the tree open at the same time; the tool refuses to
+start if the tree is locked.
+
+* Requirements
+- Gramps 6 (provides the Python =gramps= package)
+- [[https://textual.textualize.io][Textual]] (tested with 2.1.2 and 8.2.8)
+
+#+begin_src sh
+sudo apt install python3-textual
+# or: python3 -m venv --system-site-packages venv && venv/bin/pip install textual
+#+end_src
+
+* Usage
+#+begin_src sh
+python3 gtui.py MyTree                                    # tree name as shown in Gramps
+python3 gtui.py ~/.local/share/gramps/grampsdb/<id>       # or path to the tree folder
+#+end_src
+
+| Key            | Action                                                |
+|----------------+-------------------------------------------------------|
+| =↑= / =↓=, =Enter= | Move through relatives, jump to highlighted person |
+| =b= / =Backspace=  | Back                                               |
+| =/=            | Search by name                                        |
+| =e=            | Edit current person in =$EDITOR=                     |
+| =n=            | New person                                            |
+| =p= / =s= / =c=    | Add parent / spouse / child                        |
+| =x=            | Unlink the highlighted relationship (asks first)      |
+| =D=            | Delete current person (asks first)                    |
+| =q=            | Quit                                                  |
+
+** Editing
+=e= opens a small text form in =$VISUAL= or =$EDITOR= (e.g. =emacsclient=)
+with given name, surname, gender (M/F/U/X), birth and death dates. Save and
+close to apply; close unchanged to cancel. Invalid input reopens the form
+with an error line at the top.
+
+=p=, =s= and =c= open a name picker; its first entry, "+ New person",
+creates the relative through the same form. A new child goes into the
+family under the cursor if it is one of yours, otherwise your first family,
+or a newly created one.
+
+** Not supported
+Places, sources, notes, other events and media: use Gramps for those.
+No undo inside the tool; make a backup in Gramps before big edit sessions.
+
+* Testing
+Runs the app headlessly against a temporary copy of a tree (the original is
+not modified):
+#+begin_src sh
+python3 test_gtui.py ~/.local/share/gramps/grampsdb/<id>
+#+end_src
