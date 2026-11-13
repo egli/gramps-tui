@@ -55,3 +55,8 @@ not modified):
 #+begin_src sh
 python3 test_gtui.py ~/.local/share/gramps/grampsdb/<id>
 #+end_src
+
+* License
+Copyright (C) 2026 Christian Egli
+
+GPL-3.0-or-later; see [[file:LICENSE][LICENSE]]. Gramps itself is GPL-2.0-or-later.

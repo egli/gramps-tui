@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Christian Egli
 """gtui: LifeLines-style terminal browser/editor for Gramps family trees.
 
 Usage: gtui.py TREE     (tree name as listed in Gramps, or path to a tree directory)

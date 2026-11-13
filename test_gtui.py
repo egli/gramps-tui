@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Christian Egli
 """Headless check: runs gtui against a temp copy of a Gramps tree.
 
 Usage: python3 test_gtui.py PATH_TO_TREE_DIR   (e.g. ~/.local/share/gramps/grampsdb/<id>)
