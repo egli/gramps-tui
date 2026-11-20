@@ -73,6 +73,10 @@ async def main(src):
     print("ok", tmp)
 
 
+form = gtui.TEMPLATE.format(given="A", surname="B", gender="M", birth="1900", death="1950")
+assert gtui.parse_form("\n".join(l for l in form.splitlines() if not l.startswith("death")))[0] is None
+
+
 def assert_err(t):
     assert t.startswith("# ERROR: gender"), t
 

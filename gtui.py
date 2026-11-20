@@ -133,10 +133,13 @@ def parse_form(text):
             continue
         key, _, val = line.partition(":")
         data[key.strip()] = val.strip()
-    g = data.get("gender", "U").upper() or "U"
+    missing = [k for k in ("given", "surname", "gender", "birth", "death") if k not in data]
+    if missing:  # a deleted line must not silently wipe that field
+        return None, f"missing line(s): {', '.join(missing)} (leave the value empty instead)"
+    g = data["gender"].upper() or "U"
     if g not in GENDER_IN:
         return None, f"gender must be one of M, F, U, X (got {g!r})"
-    if not (data.get("given") or data.get("surname")):
+    if not (data["given"] or data["surname"]):
         return None, "given name or surname required"
     data["gender"] = g
     return data, None
@@ -370,7 +373,10 @@ class GTui(App):
             if h == NEW:
                 h = self.new_person()
             if h:
-                fn(self.db.get_person_from_handle(h))
+                try:
+                    fn(self.db.get_person_from_handle(h))
+                except ValueError as e:
+                    self.notify(str(e), severity="error")
                 self.refresh_view()
         self.push_screen(Picker(title, self.all_people(exclude={me.handle}), True), done)
 
@@ -401,6 +407,8 @@ class GTui(App):
                     self.db.add_family(f, t)
                     me.add_family_handle(f.handle)
                     self.db.commit_person(me, t)
+                if any(r.ref == child.handle for r in f.get_child_ref_list()):
+                    raise ValueError(f"already a child in family {f.gramps_id}")  # aborts the txn
                 self.db.add_child_to_family(f, child, trans=t)
         self.pick_then("Add child", fn)
 
